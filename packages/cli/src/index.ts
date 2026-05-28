@@ -12,12 +12,15 @@
  * GitHub Actions:
  *   INPUT_CONFIG → --config
  *   INPUT_BASE_REF → --base-ref
+ *   INPUT_COMMENT → --comment (post/update PR comment)
  *
- * In GitHub Actions, violations are reported as annotations and a job
- * summary is written. Locally, output goes to the console.
+ * In GitHub Actions, violations are reported as annotations, a job
+ * summary is written, and optionally a PR comment is posted.
+ * Locally, output goes to the console.
  */
 
 import * as core from "@actions/core";
+import * as github from "@actions/github";
 
 import {
   getChangedFilesFromGit,
@@ -26,29 +29,42 @@ import {
 } from "@freezeops/core";
 import type { RuleEngineInput, RuleEngineResult } from "@freezeops/core";
 
+import { postOrUpdatePrComment } from "./github-comment.js";
+import { buildMarkdownReport } from "./report.js";
+
 // ── Environment detection ───────────────────────────────────────────────
 
 const isGitHubActions = process.env["GITHUB_ACTIONS"] === "true";
+const isPullRequest =
+  isGitHubActions && github.context.eventName === "pull_request";
 
 // ── Argument parsing ────────────────────────────────────────────────────
 
 interface CliArgs {
   config?: string;
   baseRef?: string;
+  comment: boolean;
 }
 
 function parseArgs(raw: string[]): CliArgs {
-  const args: CliArgs = {};
+  const args: CliArgs = { comment: true };
 
   // GitHub Actions injects inputs as INPUT_<NAME> env vars (hyphens → underscores)
   args.config = process.env["INPUT_CONFIG"] || undefined;
   args.baseRef = process.env["INPUT_BASE_REF"] || undefined;
 
+  const commentEnv = process.env["INPUT_COMMENT"];
+  if (commentEnv !== undefined) {
+    args.comment = commentEnv !== "false" && commentEnv !== "0";
+  }
+
   for (let i = 0; i < raw.length; i++) {
-    if (raw[i] === "--config" && raw[i + 1]) {
+    if ((raw[i] === "--config" || raw[i] === "-c") && raw[i + 1]) {
       args.config = raw[++i];
-    } else if (raw[i] === "--base-ref" && raw[i + 1]) {
+    } else if ((raw[i] === "--base-ref" || raw[i] === "-b") && raw[i + 1]) {
       args.baseRef = raw[++i];
+    } else if (raw[i] === "--no-comment") {
+      args.comment = false;
     }
   }
 
@@ -79,52 +95,45 @@ function printLocal(result: RuleEngineResult, fileCount: number): void {
 function reportGitHubActions(
   result: RuleEngineResult,
   fileCount: number,
+  report: string,
 ): void {
-  // Summary heading
-  core.summary.addHeading("FreezeOps Report", 1);
+  // Job summary
+  core.summary.addRaw(report);
+  core.summary.write().catch(() => {});
 
-  const status = result.passed ? "✅ PASS" : "❌ FAIL";
-  core.summary.addRaw(`**Status:** ${status}<br>`);
-  core.summary.addRaw(`**Files checked:** ${fileCount}<br>`);
-  core.summary.addRaw(`**Rules checked:** ${result.checkedRules}<br>`);
-  core.summary.addRaw(`**Violations:** ${result.violations.length}<br>`);
-
-  if (result.violations.length > 0) {
-    core.summary.addHeading("Violations", 2);
-
-    // Build summary table
-    core.summary.addTable([
-      [
-        { data: "Rule", header: true },
-        { data: "File", header: true },
-        { data: "Detail", header: true },
-      ],
-      ...result.violations.map((v) => [
-        v.ruleType,
-        v.file ?? "-",
-        v.detail ?? v.message,
-      ]),
-    ]);
-
-    // Annotations: one error per violation
-    for (const v of result.violations) {
-      const props: core.AnnotationProperties = {
-        title: `[${v.ruleType}] ${v.message}`,
-      };
-      if (v.file) props.file = v.file;
-      core.error(v.detail ?? v.message, props);
-    }
-  }
-
-  // Write summary to step output
-  core.summary.write().catch(() => {
-    // summary.write() can fail in some CI environments — non-fatal
-  });
-
-  // Final status notice
-  if (result.passed) {
+  if (result.violations.length === 0) {
     core.notice(
       `FreezeOps passed — ${result.checkedRules} rule(s), 0 violations`,
+    );
+    return;
+  }
+
+  // Annotations
+  for (const v of result.violations) {
+    const props: core.AnnotationProperties = {
+      title: `[${v.ruleType}] ${v.message}`,
+    };
+    if (v.file) props.file = v.file;
+    core.error(v.detail ?? v.message, props);
+  }
+}
+
+// ── Output: PR comment ──────────────────────────────────────────────────
+
+async function tryPostPrComment(report: string): Promise<void> {
+  const token = process.env["GITHUB_TOKEN"];
+  if (!token) {
+    core.warning(
+      "GITHUB_TOKEN not available — skipping PR comment. " +
+        "Add `permissions: { pull-requests: write }` to your workflow.",
+    );
+    return;
+  }
+
+  const posted = await postOrUpdatePrComment({ body: report, token });
+  if (!posted) {
+    core.warning(
+      "Could not post PR comment — check token has pull-requests:write.",
     );
   }
 }
@@ -144,8 +153,14 @@ async function main(): Promise<void> {
     const input: RuleEngineInput = { config, changedFiles };
     const result = runRuleEngine(input);
 
+    const report = buildMarkdownReport({ result, fileCount: changedFiles.length });
+
     if (isGitHubActions) {
-      reportGitHubActions(result, changedFiles.length);
+      reportGitHubActions(result, changedFiles.length, report);
+
+      if (isPullRequest && args.comment) {
+        await tryPostPrComment(report);
+      }
     } else {
       printLocal(result, changedFiles.length);
     }

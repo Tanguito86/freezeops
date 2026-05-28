@@ -10,6 +10,10 @@ inputs:
   base-ref:
     description: Base ref for diff comparison (e.g. origin/main)
     required: false
+  comment:
+    description: Post or update a PR comment with the FreezeOps report
+    required: false
+    default: "true"
 
 runs:
   using: node20

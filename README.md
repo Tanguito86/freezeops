@@ -6,9 +6,9 @@ Stop AI coding tools from silently damaging your codebase. FreezeOps lets you de
 
 ---
 
-## Status: v0.5 — GitHub Action
+## Status: v0.6 — PR Comments
 
-Runs as a GitHub Action on pull requests and pushes. PR comments ship in v0.6.
+Annotations, job summary, and PR comments are live. Ready for dogfooding.
 
 ---
 
@@ -34,13 +34,17 @@ on:
   pull_request:
   push:
 
+permissions:
+  contents: read
+  pull-requests: write          # needed for PR comments
+
 jobs:
   freezeops:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0              # needed for base-ref comparison
+          fetch-depth: 0
 
       - name: Install dependencies
         run: npm install
@@ -49,9 +53,10 @@ jobs:
         with:
           config: freezeops.yml
           base-ref: origin/main
+          comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
-
-The action reads `freezeops.yml` from your repo root by default and compares the PR against `origin/main`.
 
 ### Inputs
 
@@ -59,6 +64,14 @@ The action reads `freezeops.yml` from your repo root by default and compares the
 |---|---|---|
 | `config` | `freezeops.yml` | Path to config file |
 | `base-ref` | _(none)_ | Base ref for diff (e.g. `origin/main`) |
+| `comment` | `true` | Post/update a PR comment with the report |
+
+### How PR comments work
+
+- One comment per PR — FreezeOps finds and updates its previous comment
+- Identified by an invisible `<!-- freezeops-report -->` marker
+- No comment spam, no duplicates
+- If `GITHUB_TOKEN` is missing, comments are skipped (non-fatal)
 
 ---
 
@@ -103,30 +116,9 @@ node packages/cli/dist/index.js check --config path/to/freezeops.yml
 
 # Compare against a base ref (for PR simulation)
 node packages/cli/dist/index.js check --base-ref origin/main
-```
 
-### Output format
-
-```
-FreezeOps check PASS
-Files checked: 3
-Rules checked: 2
-Violations: 0
-```
-
-On failure:
-```
-FreezeOps check FAIL
-Files checked: 3
-Rules checked: 2
-Violations: 2
-
-- [protected_paths] Modified protected path
-  file: gameplay/player.js
-  detail: gameplay/**
-- [forbidden_text] Forbidden pattern detected
-  file: utils.js
-  detail: "eval("
+# Disable PR comments (when running as GitHub Action)
+node packages/cli/dist/index.js check --no-comment
 ```
 
 ---
@@ -134,7 +126,7 @@ Violations: 2
 ## Packages
 
 - `@freezeops/core` — config loader + rules engine + git diff reader
-- `@freezeops/cli` — terminal runner + GitHub Action entrypoint
+- `@freezeops/cli` — terminal runner + GitHub Action entrypoint + PR reporter
 
 ---
 
