@@ -1,0 +1,42 @@
+# FreezeOps — GitHub Action Workflow Template
+#
+# Copy this file to your repo:
+#   cp examples/workflows/freezeops.yml .github/workflows/freezeops.yml
+#
+# Or create it manually with the content below.
+# ───────────────────────────────────────────────────────────
+
+name: FreezeOps
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  freezeops:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Clone & build FreezeOps
+        run: |
+          git clone https://github.com/Tanguito86/freezeops.git /tmp/freezeops
+          cd /tmp/freezeops
+          npm install
+          npm run build
+
+      - name: Run FreezeOps
+        run: |
+          cd /tmp/freezeops
+          node packages/cli/dist/index.js check \
+            --config "$GITHUB_WORKSPACE/freezeops.yml" \
+            --base-ref "origin/${{ github.base_ref }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -57,61 +57,24 @@ If it stays within bounds → ✅ passes.
 
 ---
 
-## Quickstart
-
-### As a GitHub Action
-
-```yaml
-# .github/workflows/freezeops.yml
-name: FreezeOps
-on:
-  pull_request:
-  push:
-    branches: [main]
-
-permissions:
-  contents: read
-  pull-requests: write
-
-jobs:
-  freezeops:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install & build
-        run: npm install && npm run build
-
-      - uses: tanguito/freezeops@main
-        with:
-          config: freezeops.yml
-          base-ref: origin/main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
-### Locally
+## 2-Minute Setup
 
 ```bash
-git clone https://github.com/Tanguito86/freezeops.git
-cd freezeops
-npm install && npm run build
+# 1. Pick a rule pack for your project type
+cp configs/web-safe.yml ./freezeops.yml
 
-# Check working tree
-node packages/cli/dist/index.js
+# 2. Edit paths to match your repo structure
+#    (open freezeops.yml — it's just YAML with comments)
 
-# Check staged changes
-node packages/cli/dist/index.js check
+# 3. Add the workflow (copy examples/workflows/freezeops.yml
+#    to .github/workflows/freezeops.yml)
 
-# Compare against a base ref
-node packages/cli/dist/index.js check --base-ref origin/main
+# 4. Open a PR. FreezeOps checks it automatically.
 ```
+
+Done. Your repo now has deterministic guardrails.
+
+**Need a different project type?** [Browse all packs →](configs/) or read the [Quickstart Guide →](docs/quickstart.md)
 
 ---
 
@@ -158,6 +121,14 @@ cp configs/game-runtime-safe.yml ./freezeops.yml  # Games, DSP
 ```
 
 [Browse all packs](configs/) · [Usage guide](docs/rule-packs.md)
+
+| Project type | Recommended pack |
+|---|---|
+| Any repo | `minimal-safe.yml` |
+| Web app (React, Vue, Svelte) | `web-safe.yml` |
+| Node backend (Express, Fastify) | `node-safe.yml` |
+| Game / runtime / DSP | `game-runtime-safe.yml` |
+| Android / mobile | `android-safe.yml` |
 
 ---
 
