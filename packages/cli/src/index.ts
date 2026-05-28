@@ -4,29 +4,32 @@
  * FreezeOps CLI — deterministic safety rules runner.
  */
 
-import { loadConfig, runRuleEngine } from "@freezeops/core";
+import {
+  getChangedFilesFromGit,
+  loadConfig,
+  runRuleEngine,
+} from "@freezeops/core";
 import type { RuleEngineInput } from "@freezeops/core";
 
 async function main(): Promise<void> {
   try {
     const config = await loadConfig();
 
-    // Mock input — real diff reader ships in 01D
-    const input: RuleEngineInput = {
-      config,
-      changedFiles: [],
-    };
+    // Read real git diff (staged → working tree fallback)
+    const changedFiles = await getChangedFilesFromGit();
 
+    const input: RuleEngineInput = { config, changedFiles };
     const result = runRuleEngine(input);
 
-    if (result.passed) {
-      console.log("FreezeOps check passed");
-      console.log(`Rules checked: ${result.checkedRules}`);
-      console.log(`Violations: ${result.violations.length}`);
-    } else {
-      console.log("FreezeOps check failed");
-      console.log(`Rules checked: ${result.checkedRules}`);
-      console.log(`Violations: ${result.violations.length}`);
+    console.log(
+      result.passed ? "FreezeOps check passed" : "FreezeOps check failed",
+    );
+    console.log(`Files checked: ${changedFiles.length}`);
+    console.log(`Rules checked: ${result.checkedRules}`);
+    console.log(`Violations: ${result.violations.length}`);
+
+    if (result.violations.length > 0) {
+      console.log("");
       for (const v of result.violations) {
         const file = v.file ? ` [${v.file}]` : "";
         const detail = v.detail ? ` (${v.detail})` : "";

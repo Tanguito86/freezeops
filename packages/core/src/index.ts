@@ -7,6 +7,9 @@ export type { LoadConfigOptions } from "./config.js";
 
 export { runRuleEngine } from "./engine.js";
 
+export { getChangedFilesFromGit } from "./git.js";
+export type { GitDiffOptions } from "./git.js";
+
 import type {
   FreezeOpsConfig,
   FreezeOpsRule,

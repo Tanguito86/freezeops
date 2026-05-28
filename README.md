@@ -6,9 +6,9 @@ Stop AI coding tools from silently damaging your codebase. FreezeOps lets you de
 
 ---
 
-## Status: v0.3 — Rule Engine
+## Status: v0.4 — Git Diff Reader
 
-Config loading + deterministic rule engine live. Git diff reader ships in v0.4.
+Config loading, rule engine, and git diff reader are live. GitHub Action ships in v0.5.
 
 ---
 
@@ -17,7 +17,7 @@ Config loading + deterministic rule engine live. Git diff reader ships in v0.4.
 ```bash
 npm install
 npm run validate                           # typecheck + build
-node packages/cli/dist/index.js            # run CLI
+node packages/cli/dist/index.js            # run against local changes
 ```
 
 ---
@@ -41,30 +41,11 @@ rules:
       - eval(
 ```
 
-### Supported rule types
+### Rule types
 
 - **max_changed_lines** — fail if total changed lines exceeds `value`
 - **protected_paths** — fail if any changed file matches a glob in `paths`
 - **forbidden_text** — fail if any added line contains a pattern in `patterns`
-
----
-
-## Engine Input Model
-
-The rule engine accepts an explicit list of changed files:
-
-```typescript
-interface ChangedFile {
-  path: string;           // relative file path
-  addedLines: string[];   // new or modified lines
-  removedLines?: string[]; // deleted lines (optional)
-}
-
-interface RuleEngineInput {
-  config: FreezeOpsConfig;
-  changedFiles: ChangedFile[];
-}
-```
 
 ---
 
@@ -74,27 +55,58 @@ interface RuleEngineInput {
 node packages/cli/dist/index.js
 ```
 
-Clean output:
+The CLI reads local git changes (staged first, then working tree) and runs all configured rules.
+
+Clean pass:
 ```
 FreezeOps check passed
-Rules checked: 3
+Files checked: 3
+Rules checked: 2
 Violations: 0
 ```
 
 With violations:
 ```
 FreezeOps check failed
-Rules checked: 3
-Violations: 2
+Files checked: 3
+Rules checked: 2
+Violations: 1
   - Modified protected path [gameplay/player.js] (matched glob: gameplay/**)
-  - Forbidden pattern detected [utils.js] ("eval(")
+```
+
+### Local testing workflow
+
+```bash
+# 1. Make changes to a file
+echo "setInterval(() => {}, 1000)" >> utils.js
+
+# 2. Run FreezeOps (checks working tree)
+node packages/cli/dist/index.js
+
+# 3. Stage the changes
+git add utils.js
+
+# 4. Run again (checks staged)
+node packages/cli/dist/index.js
+```
+
+---
+
+## Engine Input Model
+
+```typescript
+interface ChangedFile {
+  path: string;
+  addedLines: string[];
+  removedLines?: string[];
+}
 ```
 
 ---
 
 ## Packages
 
-- `@freezeops/core` — config loader + deterministic rules engine
+- `@freezeops/core` — config loader + rules engine + git diff reader
 - `@freezeops/cli` — terminal runner
 
 ---
