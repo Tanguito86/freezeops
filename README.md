@@ -237,6 +237,18 @@ dirty working tree blocked by `max_changed_lines`.
 
 [Full case study →](docs/case-studies/galaxy-raiders.md) · [Config →](https://github.com/Tanguito86/galaxy-raiders/blob/master/freezeops.yml)
 
+### SoundBend
+
+Private Android/Kotlin real-time audio DSP app with parametric EQ,
+limiter chain, and PCM pipeline. Protected DSP engine, limiter
+chain, audio routing, and resampling from accidental AI changes.
+
+**Results:** Lab paths ✅, limiter chain ❌, Thread.sleep ❌.
+Zero DSP/audio behavior touched.
+
+[Full case study →](docs/case-studies/soundbend.md)
+*Repository is private — case study omits proprietary details.*
+
 ---
 
 ## Dogfooding

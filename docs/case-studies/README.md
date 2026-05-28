@@ -18,6 +18,19 @@ the project, the risks, the configuration, and the results.
 
 ---
 
+## SoundBend
+
+**Private Android/Kotlin DSP runtime app with real-time PCM audio processing.**
+
+- **Protected:** DSP engine, limiter chain, audio pipeline, resampling, FFT/analysis
+- **Rules:** Protected paths on core DSP + audio runtime, forbidden blocking calls, 250-line diff limit
+- **Result:** Lab files ✅, limiter chain ❌, Thread.sleep ❌. No DSP/audio behavior touched.
+
+[Read full case study →](soundbend.md)
+*Repository is private — case study omits proprietary implementation details.*
+
+---
+
 ## Add Your Project
 
 Using FreezeOps on a real project? We'd love to feature it here.
