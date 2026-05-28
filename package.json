@@ -11,9 +11,9 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w @freezeops/core && npm run build -w @freezeops/cli",
-    "typecheck": "npm run typecheck -w @freezeops/core && npm run typecheck -w @freezeops/cli",
-    "validate": "npm run build -w @freezeops/core && npm run typecheck && npm run build -w @freezeops/cli"
+    "build": "npm run build -w @tanguito/freezeops-core && npm run build -w @tanguito/freezeops",
+    "typecheck": "npm run typecheck -w @tanguito/freezeops-core && npm run typecheck -w @tanguito/freezeops",
+    "validate": "npm run build -w @tanguito/freezeops-core && npm run typecheck && npm run build -w @tanguito/freezeops"
   },
   "engines": {
     "node": ">=20.0.0"

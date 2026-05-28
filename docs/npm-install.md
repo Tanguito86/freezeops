@@ -1,14 +1,14 @@
 # Install from npm
 
-FreezeOps is available as `@freezeops/cli` on npm.
+FreezeOps is available as `@tanguito/freezeops` on npm.
 
 ## Quick Install
 
 ```bash
-npm install -D @freezeops/cli
+npm install -D @tanguito/freezeops
 ```
 
-This installs both the CLI and the `@freezeops/core` engine as a dependency.
+This installs both the CLI and the `@tanguito/freezeops-core` engine as a dependency.
 
 ## Usage
 
@@ -81,10 +81,10 @@ tree diff to identify changed files.
 
 ### `command not found: freezeops`
 
-Make sure `@freezeops/cli` is installed:
+Make sure `@tanguito/freezeops` is installed:
 
 ```bash
-npm install -D @freezeops/cli
+npm install -D @tanguito/freezeops
 npx freezeops check
 ```
 

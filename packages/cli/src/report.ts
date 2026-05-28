@@ -1,4 +1,4 @@
-import type { RuleEngineResult } from "@freezeops/core";
+import type { RuleEngineResult } from "@tanguito/freezeops-core";
 
 // ── Marker for deduplication ────────────────────────────────────────────
 

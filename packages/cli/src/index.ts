@@ -26,8 +26,8 @@ import {
   getChangedFilesFromGit,
   loadConfig,
   runRuleEngine,
-} from "@freezeops/core";
-import type { RuleEngineInput, RuleEngineResult } from "@freezeops/core";
+} from "@tanguito/freezeops-core";
+import type { RuleEngineInput, RuleEngineResult } from "@tanguito/freezeops-core";
 
 import { postOrUpdatePrComment } from "./github-comment.js";
 import { buildMarkdownReport } from "./report.js";

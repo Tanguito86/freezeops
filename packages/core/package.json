@@ -1,5 +1,5 @@
 {
-  "name": "@freezeops/core",
+  "name": "@tanguito/freezeops-core",
   "version": "0.2.0",
   "description": "FreezeOps deterministic rules engine",
   "repository": "github:Tanguito86/freezeops",

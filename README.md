@@ -109,7 +109,7 @@ Done. Your repo now has deterministic guardrails.
 ## Install from npm
 
 ```bash
-npm install -D @freezeops/cli
+npm install -D @tanguito/freezeops
 ```
 
 ```bash
@@ -386,7 +386,7 @@ Quick links:
 - **Diff parser**: unified diff only (add/modify/delete). No binary/rename support yet
 - **forbidden_text**: substring matching by default — use `regex: true` to opt in to regex
 - **PR comments**: require `pull-requests: write` permission
-- **Package**: not published to npm yet
+- **Package**: published to npm as `@tanguito/freezeops`
 - **Marketplace**: not listed on GitHub Marketplace yet
 
 ---
