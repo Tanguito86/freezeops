@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.2.0] — 2026-05-28
 
 ### Features
 
@@ -19,7 +19,11 @@
 - Updated `docs/rule-packs.md` with global ignore section
 - Updated `README.md` config example with new features
 
-## v0.1.0 — 2026-05-28
+### Breaking changes
+
+None. v0.1.0 configs work unchanged.
+
+## [0.1.0] — 2026-05-28
 
 Initial public release.
 

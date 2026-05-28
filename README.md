@@ -344,8 +344,8 @@ freezeops.yml          git diff
 
 ## Status
 
-**v0.1.0** — Local CLI, GitHub Action, annotations, PR comments, and
-dogfooding are live. See [CHANGELOG.md](CHANGELOG.md).
+**v0.2.0** — Global `ignore`, rule-level `exclude`, regex opt-in, and
+improved violations. See [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
