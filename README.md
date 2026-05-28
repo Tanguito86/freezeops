@@ -1,42 +1,77 @@
 # FreezeOps
 
-**Guardrails for AI-assisted development.**
+**Deterministic guardrails for AI-assisted development.**
 
-Stop AI coding tools from silently damaging your codebase. FreezeOps lets you define deterministic safety rules that run on every PR — no AI, no cloud, just rules.
+Stop AI coding tools from silently damaging sensitive codebases.
+No AI. No cloud. Just rules.
 
 ---
 
-## Status: v0.6 — PR Comments
+[![CI](https://github.com/tanguito/freezeops/actions/workflows/validate.yml/badge.svg)](https://github.com/tanguito/freezeops/actions/workflows/validate.yml)
+[![FreezeOps](https://github.com/tanguito/freezeops/actions/workflows/freezeops.yml/badge.svg)](https://github.com/tanguito/freezeops/actions/workflows/freezeops.yml)
 
-Annotations, job summary, and PR comments are live. Ready for dogfooding.
+---
+
+## The Problem
+
+Teams using Claude, Cursor, Copilot, or OpenCode are shipping AI-generated
+code faster than ever. But nobody is checking whether that code respects
+critical boundaries:
+
+- Gameplay logic that must not change
+- DSP runtimes that must stay frozen
+- Security-sensitive paths that need human review
+- Debugging leftovers that shouldn't reach production
+
+**Silent damage.** No test catches it. No linter blocks it. By the time
+someone notices, the regression is already deployed.
+
+---
+
+## What FreezeOps Does
+
+Define safety rules in a YAML file. FreezeOps checks every PR against them
+— deterministically, offline, no AI involved.
+
+```yaml
+# freezeops.yml
+version: "1"
+rules:
+  - type: max_changed_lines
+    value: 500
+
+  - type: protected_paths
+    paths:
+      - gameplay/**
+      - dsp/runtime/**
+
+  - type: forbidden_text
+    patterns:
+      - eval(
+      - setInterval
+      - Math.random()
+```
+
+If a PR touches a protected path or adds a forbidden pattern → ❌ blocked.
+If it stays within bounds → ✅ passes.
 
 ---
 
 ## Quickstart
 
-```bash
-npm install
-npm run validate                           # typecheck + build
-
-# Run locally
-node packages/cli/dist/index.js
-node packages/cli/dist/index.js check --config freezeops.yml
-node packages/cli/dist/index.js check --base-ref origin/main
-```
-
----
-
-## GitHub Action
+### As a GitHub Action
 
 ```yaml
+# .github/workflows/freezeops.yml
 name: FreezeOps
 on:
   pull_request:
   push:
+    branches: [main]
 
 permissions:
   contents: read
-  pull-requests: write          # needed for PR comments
+  pull-requests: write
 
 jobs:
   freezeops:
@@ -46,123 +81,104 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install dependencies
-        run: npm install
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - uses: ./
+      - name: Install & build
+        run: npm install && npm run build
+
+      - uses: tanguito/freezeops@main
         with:
           config: freezeops.yml
           base-ref: origin/main
-          comment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### Inputs
-
-| Input | Default | Description |
-|---|---|---|
-| `config` | `freezeops.yml` | Path to config file |
-| `base-ref` | _(none)_ | Base ref for diff (e.g. `origin/main`) |
-| `comment` | `true` | Post/update a PR comment with the report |
-
-### How PR comments work
-
-- One comment per PR — FreezeOps finds and updates its previous comment
-- Identified by an invisible `<!-- freezeops-report -->` marker
-- No comment spam, no duplicates
-- If `GITHUB_TOKEN` is missing, comments are skipped (non-fatal)
-
----
-
-## freezeops.yml
-
-```yaml
-version: "1"
-rules:
-  - type: max_changed_lines
-    value: 500
-
-  - type: protected_paths
-    paths:
-      - gameplay/**
-      - engine/core/**
-
-  - type: forbidden_text
-    patterns:
-      - setInterval
-      - eval(
-```
-
-### Rule types
-
-- **max_changed_lines** — fail if total changed lines exceeds `value`
-- **protected_paths** — fail if any changed file matches a glob in `paths`
-- **forbidden_text** — fail if any added line contains a pattern in `patterns`
-
----
-
-## CLI
+### Locally
 
 ```bash
-# Check working tree changes
+git clone https://github.com/tanguito/freezeops.git
+cd freezeops
+npm install && npm run build
+
+# Check working tree
 node packages/cli/dist/index.js
 
-# Check staged changes  
+# Check staged changes
 node packages/cli/dist/index.js check
 
-# Custom config
-node packages/cli/dist/index.js check --config path/to/freezeops.yml
-
-# Compare against a base ref (for PR simulation)
+# Compare against a base ref
 node packages/cli/dist/index.js check --base-ref origin/main
-
-# Disable PR comments (when running as GitHub Action)
-node packages/cli/dist/index.js check --no-comment
 ```
 
 ---
 
-## Packages
+## Rule Types
 
-- `@freezeops/core` — config loader + rules engine + git diff reader
-- `@freezeops/cli` — terminal runner + GitHub Action entrypoint + PR reporter
+| Rule | What it catches |
+|---|---|
+| `max_changed_lines` | PRs that are too large to review safely |
+| `protected_paths` | Changes to files that must not be touched lightly |
+| `forbidden_text` | Debugging leftovers, dangerous patterns, banned APIs |
+
+Full docs: [docs/rules.md](docs/rules.md)
 
 ---
 
-## Philosophy
+## What FreezeOps Is NOT
 
-- **Deterministic.** Same input → same output. Always.
-- **Offline-first.** No network calls during audit.
-- **Minimal.** Small enough for one person to maintain.
-- **Zero lock-in.** Open source, plain YAML config.
+- ❌ An AI code reviewer
+- ❌ A linter
+- ❌ A test runner
+- ❌ A security scanner
+- ❌ A cloud service
+
+It's a **deterministic policy engine for your repo's safety boundaries.**
+
+---
+
+## Why Deterministic?
+
+Same input → same output. Always. No hallucinations, no false
+negatives, no "I think this is probably fine." When FreezeOps blocks
+a PR, you know exactly why.
 
 ---
 
 ## Dogfooding
 
-FreezeOps audits itself. See [docs/dogfood.md](docs/dogfood.md) for details.
+FreezeOps audits itself. Our own `freezeops.yml` protects the rule
+engine from accidental changes and blocks debugging leftovers.
 
-Our own `freezeops.yml`:
-```yaml
-rules:
-  - type: max_changed_lines
-    value: 500
-  - type: forbidden_text
-    patterns:
-      - eval(
-      - console.log("debug")
-      - TODO_THROWAWAY
-  - type: protected_paths
-    paths:
-      - packages/core/src/engine.ts
-```
+See [docs/dogfood.md](docs/dogfood.md)
 
-The workflow runs on every PR and push to main — annotations, summary,
-and a PR comment with the full report.
+---
+
+## Documentation
+
+- [Rules](docs/rules.md) — rule types and configuration
+- [GitHub Action](docs/action.md) — inputs, permissions, examples
+- [CLI](docs/cli.md) — terminal usage and flags
+- [Dogfooding](docs/dogfood.md) — how we use FreezeOps on itself
+
+---
+
+## Status
+
+**v0.1.0** — Local CLI, GitHub Action, annotations, PR comments, and
+dogfooding are live. See [CHANGELOG.md](CHANGELOG.md).
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). TL;DR: deterministic first,
+no AI dependency, small changes.
 
 ---
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE)
