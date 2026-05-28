@@ -1,0 +1,17 @@
+{
+  "name": "freezeops",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Guardrails for AI-assisted development — deterministic safety rules for sensitive codebases",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "validate": "npm run typecheck && npm run build"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

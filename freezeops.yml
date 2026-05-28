@@ -1,0 +1,4 @@
+version: "1"
+rules:
+  - type: max_changed_lines
+    value: 500

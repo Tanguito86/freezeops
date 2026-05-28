@@ -1,0 +1,22 @@
+{
+  "name": "@freezeops/cli",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FreezeOps CLI — run safety checks from the terminal",
+  "type": "module",
+  "main": "./src/index.ts",
+  "bin": {
+    "freezeops": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@freezeops/core": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.7.0"
+  }
+}
