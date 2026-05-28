@@ -77,6 +77,28 @@ rules:
       - *.md
 ```
 
+### Path scoping (v0.3.0+)
+
+Limit the line count to specific paths for per-zone thresholds:
+
+```yaml
+rules:
+  - type: max_changed_lines
+    value: 500            # global limit for the whole PR
+
+  - type: max_changed_lines
+    value: 40             # strict limit for auth code
+    paths:
+      - src/auth/**
+      - src/payments/**
+    exclude:
+      - src/auth/docs/**
+```
+
+When `paths` is set, only files matching those globs count toward the
+limit. Changes outside the scope are ignored by that rule. Use multiple
+`max_changed_lines` rules with different scopes for per-zone thresholds.
+
 ### What it detects
 
 Counts `addedLines` + `removedLines` across all changed files

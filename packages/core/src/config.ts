@@ -138,8 +138,35 @@ function validateMaxChangedLines(
   if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
     throw new Error(`${prefix}: "value" must be a positive number`);
   }
+
+  // paths (optional — scope the line count to specific globs)
+  const paths = validateRulePaths(obj.paths, prefix);
+
   const exclude = validateRuleExclude(obj.exclude, prefix);
-  return { type: "max_changed_lines", value, ...(exclude ? { exclude } : {}) };
+  return {
+    type: "max_changed_lines",
+    value,
+    ...(paths ? { paths } : {}),
+    ...(exclude ? { exclude } : {}),
+  };
+}
+
+function validateRulePaths(
+  raw: unknown,
+  prefix: string,
+): string[] | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!Array.isArray(raw) || raw.length === 0) {
+    throw new Error(`${prefix}: "paths" must be a non-empty array of glob strings`);
+  }
+  for (const entry of raw) {
+    if (typeof entry !== "string" || entry.trim().length === 0) {
+      throw new Error(
+        `${prefix}: each entry in "paths" must be a non-empty glob string`,
+      );
+    }
+  }
+  return raw as string[];
 }
 
 function validateProtectedPaths(

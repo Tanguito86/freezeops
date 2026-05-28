@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Features
+
+- **`max_changed_lines` path scoping** — `paths` field limits line counting to specific globs, enabling per-zone thresholds (e.g., 40 lines for `src/auth/**`, 500 globally)
+
 ## [0.3.0] — 2026-05-28
 
 ### Features

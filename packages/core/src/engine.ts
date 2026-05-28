@@ -141,20 +141,31 @@ function checkMaxChangedLines(
   changedFiles: ChangedFile[],
 ): RuleViolation[] {
   const exclude = rule.exclude ?? [];
-  let total = 0;
 
-  for (const file of changedFiles) {
+  // Filter to scoped paths if defined, otherwise use all files
+  const scopeFiles = rule.paths
+    ? changedFiles.filter((f) => matchesAny(f.path, rule.paths!))
+    : changedFiles;
+
+  let total = 0;
+  const matchedFiles: string[] = [];
+
+  for (const file of scopeFiles) {
     if (matchesAny(file.path, exclude)) continue;
     total += file.addedLines.length;
     total += file.removedLines?.length ?? 0;
+    matchedFiles.push(file.path);
   }
 
   if (total > rule.value) {
+    const detail = rule.paths
+      ? `${total} > ${rule.value} (scoped to ${rule.paths.join(", ")})`
+      : `${total} > ${rule.value}`;
     return [
       {
         ruleType: "max_changed_lines",
-        message: "PR exceeds max changed lines",
-        detail: `${total} > ${rule.value}`,
+        message: "Changes exceed max allowed lines",
+        detail,
       },
     ];
   }

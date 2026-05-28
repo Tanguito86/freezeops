@@ -10,6 +10,8 @@ export type RuleType =
 export interface MaxChangedLinesRule {
   type: "max_changed_lines";
   value: number;
+  /** If set, only count changes in files matching these globs. */
+  paths?: string[];
   exclude?: string[];
 }
 
