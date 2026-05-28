@@ -6,32 +6,9 @@ Stop AI coding tools from silently damaging your codebase. FreezeOps lets you de
 
 ---
 
-## Status: Bootstrap v0.1
+## Status: v0.2 — Config Loader
 
-This is the foundation. No rules engine yet. Just a clean monorepo that compiles.
-
----
-
-## What FreezeOps will do
-
-- Read declarative YAML rules (`freezeops.yml`)
-- Analyze git diffs
-- Block PRs that violate your constraints
-- Run offline, no backend, no telemetry
-
-Example rule (coming in v0.2):
-
-```yaml
-rules:
-  - type: protected_paths
-    paths:
-      - gameplay/**
-      - dsp/runtime/**
-  - type: forbidden_text
-    patterns:
-      - setInterval
-      - eval(
-```
+Config loading and validation is live. Rule evaluation ships in v0.3.
 
 ---
 
@@ -39,17 +16,62 @@ rules:
 
 ```bash
 npm install
-npm run validate    # typecheck + build
+npm run validate          # typecheck + build
+node packages/cli/dist/index.js   # run CLI
+```
+
+---
+
+## freezeops.yml
+
+```yaml
+version: "1"
+rules:
+  - type: max_changed_lines
+    value: 500
+
+  - type: protected_paths
+    paths:
+      - gameplay/**
+      - engine/core/**
+
+  - type: forbidden_text
+    patterns:
+      - setInterval
+      - eval\(
+      - Math\.random\(\)
+```
+
+### Supported rule types
+
+- **max_changed_lines** — fail if PR changes more than `value` lines
+- **protected_paths** — fail if any changed file matches a glob in `paths`
+- **forbidden_text** — fail if any added line matches a pattern in `patterns`
+
+---
+
+## CLI
+
+```bash
+node packages/cli/dist/index.js
+# FreezeOps config loaded OK
+# Rules: 3
+```
+
+Errors are human-readable:
+
+```
+Config file not found: /home/user/project/freezeops.yml
+rules[1]: unknown or missing rule type "lint". Supported types: max_changed_lines, protected_paths, forbidden_text
+rules[0]: "value" must be a positive number
 ```
 
 ---
 
 ## Packages
 
-| Package | Purpose |
-|---------|---------|
-| `@freezeops/core` | Deterministic rules engine |
-| `@freezeops/cli` | Terminal runner |
+- `@freezeops/core` — deterministic rules engine + config loader
+- `@freezeops/cli` — terminal runner
 
 ---
 

@@ -2,20 +2,25 @@
 
 /**
  * FreezeOps CLI — deterministic safety rules runner.
- *
- * Bootstrap v0.1 — placeholder. Real CLI ships in Sprint 01B.
  */
 
-import { runFreezeOpsCheck } from "@freezeops/core";
+import { loadConfig, runFreezeOpsCheck } from "@freezeops/core";
 
-function main(): void {
-  const result = runFreezeOpsCheck();
+async function main(): Promise<void> {
+  try {
+    const config = await loadConfig();
 
-  if (result.passed) {
-    console.log("FreezeOps CLI bootstrap OK");
-    process.exit(0);
-  } else {
-    console.error("FreezeOps check failed");
+    console.log("FreezeOps config loaded OK");
+    console.log(`Rules: ${config.rules.length}`);
+
+    // Placeholder — real audit ships in 01C
+    const result = runFreezeOpsCheck();
+    if (!result.passed) {
+      console.error("FreezeOps check failed");
+      process.exit(1);
+    }
+  } catch (err) {
+    console.error(String((err as Error).message ?? err));
     process.exit(1);
   }
 }
