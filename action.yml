@@ -14,6 +14,9 @@ inputs:
     description: Post or update a PR comment with the FreezeOps report
     required: false
     default: "true"
+  sarif:
+    description: Write SARIF 2.1.0 report to this path
+    required: false
 
 runs:
   using: node20

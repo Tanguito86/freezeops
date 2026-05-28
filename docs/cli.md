@@ -57,6 +57,25 @@ node packages/cli/dist/index.js check --no-comment
 
 Only relevant when `GITHUB_ACTIONS=true`.
 
+### Write SARIF report
+
+```bash
+node packages/cli/dist/index.js check --sarif freezeops.sarif.json
+```
+
+Writes a SARIF 2.1.0 report with violations as results. Rules are mapped:
+- `max_changed_lines`
+- `protected_paths`
+- `forbidden_text`
+
+Each result includes `ruleId`, `level: "error"`, `message`, optional `locations`,
+and `properties` (detail, matchedPattern, matchedGlob).
+
+```bash
+# Short form
+node packages/cli/dist/index.js check -s freezeops.sarif.json
+```
+
 ---
 
 ## Behavior

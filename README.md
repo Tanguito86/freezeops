@@ -117,6 +117,11 @@ npm install -D @tanguito/freezeops
 npx freezeops check
 ```
 
+```bash
+# Optional: export SARIF for GitHub Code Scanning
+npx freezeops check --sarif freezeops.sarif.json
+```
+
 [Full npm install guide →](docs/npm-install.md)
 
 ---

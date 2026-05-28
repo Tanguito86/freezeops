@@ -11,6 +11,7 @@ FreezeOps runs as a [GitHub Action](https://docs.github.com/en/actions).
 | `config` | No | `freezeops.yml` | Path to the config file |
 | `base-ref` | No | _(none)_ | Base ref for diff (e.g. `origin/main`) |
 | `comment` | No | `true` | Post or update a PR comment |
+| `sarif` | No | _(none)_ | Write SARIF 2.1.0 report to this path |
 
 ---
 
@@ -85,6 +86,32 @@ jobs:
 
 Annotations and job summary are still generated. Only the PR comment
 is skipped.
+
+---
+
+## SARIF Output
+
+```yaml
+- uses: tanguito/freezeops@main
+  with:
+    config: freezeops.yml
+    base-ref: origin/main
+    sarif: freezeops.sarif.json
+```
+
+Writes a SARIF 2.1.0 report alongside normal annotations/summary.
+Use with `github/codeql-action/upload-sarif` for GitHub Code Scanning:
+
+```yaml
+- uses: tanguito/freezeops@main
+  with:
+    sarif: freezeops.sarif.json
+
+- uses: github/codeql-action/upload-sarif@v3
+  if: always()
+  with:
+    sarif_file: freezeops.sarif.json
+```
 
 ---
 

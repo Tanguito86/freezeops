@@ -8,11 +8,13 @@
  *   node packages/cli/dist/index.js check
  *   node packages/cli/dist/index.js check --config path.yml
  *   node packages/cli/dist/index.js check --base-ref origin/main
+ *   node packages/cli/dist/index.js check --sarif freezeops.sarif.json
  *
  * GitHub Actions:
  *   INPUT_CONFIG → --config
  *   INPUT_BASE_REF → --base-ref
  *   INPUT_COMMENT → --comment (post/update PR comment)
+ *   INPUT_SARIF → --sarif (write SARIF 2.1.0 report)
  *
  * In GitHub Actions, violations are reported as annotations, a job
  * summary is written, and optionally a PR comment is posted.
@@ -21,6 +23,13 @@
 
 import * as core from "@actions/core";
 import * as github from "@actions/github";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { readFileSync } from "node:fs";
+
+const PKG_VERSION: string = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf-8"),
+).version;
 
 import {
   getChangedFilesFromGit,
@@ -31,6 +40,7 @@ import type { RuleEngineInput, RuleEngineResult } from "@tanguito/freezeops-core
 
 import { postOrUpdatePrComment } from "./github-comment.js";
 import { buildMarkdownReport } from "./report.js";
+import { buildSarifReport } from "./sarif.js";
 
 // ── Environment detection ───────────────────────────────────────────────
 
@@ -44,6 +54,7 @@ interface CliArgs {
   config?: string;
   baseRef?: string;
   comment: boolean;
+  sarif?: string;
 }
 
 function parseArgs(raw: string[]): CliArgs {
@@ -52,6 +63,7 @@ function parseArgs(raw: string[]): CliArgs {
   // GitHub Actions injects inputs as INPUT_<NAME> env vars (hyphens → underscores)
   args.config = process.env["INPUT_CONFIG"] || undefined;
   args.baseRef = process.env["INPUT_BASE_REF"] || undefined;
+  args.sarif = process.env["INPUT_SARIF"] || undefined;
 
   const commentEnv = process.env["INPUT_COMMENT"];
   if (commentEnv !== undefined) {
@@ -65,6 +77,8 @@ function parseArgs(raw: string[]): CliArgs {
       args.baseRef = raw[++i];
     } else if (raw[i] === "--no-comment") {
       args.comment = false;
+    } else if ((raw[i] === "--sarif" || raw[i] === "-s") && raw[i + 1]) {
+      args.sarif = raw[++i];
     }
   }
 
@@ -154,6 +168,24 @@ async function main(): Promise<void> {
     const result = runRuleEngine(input);
 
     const report = buildMarkdownReport({ result, fileCount: changedFiles.length });
+
+    // ── SARIF output (optional) ──────────────────────────────────────
+    if (args.sarif) {
+      try {
+        const sarif = buildSarifReport(result, {
+          version: PKG_VERSION,
+          fileCount: changedFiles.length,
+        });
+        const sarifPath = path.resolve(args.sarif);
+        await fs.mkdir(path.dirname(sarifPath), { recursive: true });
+        await fs.writeFile(sarifPath, JSON.stringify(sarif, null, 2));
+        console.log(`SARIF report written: ${sarifPath}`);
+      } catch (sarifErr) {
+        const msg = String((sarifErr as Error).message ?? sarifErr);
+        console.error(`SARIF write failed: ${msg}`);
+        // Don't crash — SARIF is best-effort
+      }
+    }
 
     if (isGitHubActions) {
       reportGitHubActions(result, changedFiles.length, report);
