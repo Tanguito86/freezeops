@@ -7,8 +7,8 @@ No AI. No cloud. Just rules.
 
 ---
 
-[![CI](https://github.com/tanguito/freezeops/actions/workflows/validate.yml/badge.svg)](https://github.com/tanguito/freezeops/actions/workflows/validate.yml)
-[![FreezeOps](https://github.com/tanguito/freezeops/actions/workflows/freezeops.yml/badge.svg)](https://github.com/tanguito/freezeops/actions/workflows/freezeops.yml)
+[![CI](https://github.com/Tanguito86/freezeops/actions/workflows/validate.yml/badge.svg)](https://github.com/Tanguito86/freezeops/actions/workflows/validate.yml)
+[![FreezeOps](https://github.com/Tanguito86/freezeops/actions/workflows/freezeops.yml/badge.svg)](https://github.com/Tanguito86/freezeops/actions/workflows/freezeops.yml)
 
 ---
 
@@ -99,7 +99,7 @@ jobs:
 ### Locally
 
 ```bash
-git clone https://github.com/tanguito/freezeops.git
+git clone https://github.com/Tanguito86/freezeops.git
 cd freezeops
 npm install && npm run build
 
