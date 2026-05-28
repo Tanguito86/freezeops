@@ -106,6 +106,20 @@ Done. Your repo now has deterministic guardrails.
 
 ---
 
+## Install from npm
+
+```bash
+npm install -D @freezeops/cli
+```
+
+```bash
+npx freezeops check
+```
+
+[Full npm install guide →](docs/npm-install.md)
+
+---
+
 ## Rule Types
 
 | Rule | What it catches |

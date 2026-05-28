@@ -19,6 +19,15 @@
 - Updated `docs/rule-packs.md` with global ignore section
 - Updated `README.md` config example with new features
 
+### npm Packaging
+
+- Removed `"private": true` from `@freezeops/core` and `@freezeops/cli`
+- Added `repository`, `homepage`, `bugs`, `keywords`, `license` fields
+- Added `files` whitelist (dist/ only) and `publishConfig`
+- Fixed CLI `main` and `exports` to point to dist
+- Added `docs/npm-install.md` and `docs/npm-publish-checklist.md`
+- README: added Install from npm section
+
 ### Breaking changes
 
 None. v0.1.0 configs work unchanged.
