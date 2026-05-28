@@ -9,6 +9,7 @@ No AI. No cloud. Just rules.
 
 [![CI](https://github.com/Tanguito86/freezeops/actions/workflows/validate.yml/badge.svg)](https://github.com/Tanguito86/freezeops/actions/workflows/validate.yml)
 [![FreezeOps](https://github.com/Tanguito86/freezeops/actions/workflows/freezeops.yml/badge.svg)](https://github.com/Tanguito86/freezeops/actions/workflows/freezeops.yml)
+[![npm version](https://badge.fury.io/js/%40tanguito%2Ffreezeops.svg)](https://www.npmjs.com/package/@tanguito/freezeops)
 
 ---
 
@@ -195,7 +196,7 @@ FreezeOps does the enforcing — deterministically.
 | You need code quality review | FreezeOps checks boundaries, not logic | SonarQube, CodeClimate |
 | You want AI-powered suggestions | FreezeOps is deterministic on purpose | CodeRabbit, Copilot |
 | Your team has no sensitive code | No paths to protect | Standard CI only |
-| You need regex patterns | Substring only (regex planned) | ESLint, grep hooks |
+| You need regex patterns | Substring only (use `regex: true` for regex) | ESLint, grep hooks |
 | You want a cloud service | FreezeOps runs in your CI | Wait for SaaS tier |
 
 ---

@@ -134,7 +134,21 @@ All tests pass on the v0.2.0 codebase:
 ## What's Next (v0.3.0 candidates)
 
 - `max_changed_lines` per-file mode
+- SARIF output
 - `--fix` dry-run mode
 - More starter packs (Python, Rust, Go)
-- npm package publication
 - GitHub Marketplace listing
+
+---
+
+## Available on npm
+
+FreezeOps v0.2.0 is published to npm under `@tanguito`.
+
+```bash
+npm install -D @tanguito/freezeops
+npx freezeops check
+```
+
+- [@tanguito/freezeops-core](https://www.npmjs.com/package/@tanguito/freezeops-core) — deterministic rules engine
+- [@tanguito/freezeops](https://www.npmjs.com/package/@tanguito/freezeops) — CLI + GitHub Action

@@ -1,6 +1,9 @@
 # npm Publish Checklist
 
-Checklist for publishing `@freezeops/core` and `@freezeops/cli` to npm.
+Checklist for publishing `@tanguito/freezeops-core` and `@tanguito/freezeops` to npm.
+
+> **Note:** The `@freezeops` scope is reserved for a future organization migration.
+> For now, packages live under the personal scope `@tanguito`.
 
 ---
 
@@ -41,7 +44,7 @@ npm publish --access public
 Verify:
 
 ```bash
-npm view @freezeops/core version
+npm view @tanguito/freezeops-core version
 ```
 
 ### 3. Publish CLI
@@ -54,23 +57,23 @@ npm publish --access public
 Verify:
 
 ```bash
-npm view @freezeops/cli version
-npx @freezeops/cli check --help
+npm view @tanguito/freezeops version
+npx freezeops check
 ```
 
 ### 4. Verify package pages
 
-- https://www.npmjs.com/package/@freezeops/core
-- https://www.npmjs.com/package/@freezeops/cli
+- https://www.npmjs.com/package/@tanguito/freezeops-core
+- https://www.npmjs.com/package/@tanguito/freezeops
 
 ---
 
 ## Post-publish
 
-- [ ] `npx @freezeops/cli check` works from any directory
-- [ ] Fresh install test: `mkdir /tmp/test && cd /tmp/test && npm init -y && npm i @freezeops/cli && npx freezeops check`
+- [ ] `npx freezeops check` works from any directory
+- [ ] Fresh install test: `mkdir /tmp/test && cd /tmp/test && npm init -y && npm i @tanguito/freezeops && npx freezeops check`
 - [ ] GitHub Action using `Tanguito86/freezeops@v0.2.0` still works
-- [ ] Update release notes with npm badge: `[![npm version](https://badge.fury.io/js/@freezeops%2Fcli.svg)](https://www.npmjs.com/package/@freezeops/cli)`
+- [ ] Update release notes with npm badge
 
 ---
 
@@ -80,6 +83,6 @@ If something goes wrong:
 
 ```bash
 # Unpublish within 72 hours
-npm unpublish @freezeops/cli@0.2.0
-npm unpublish @freezeops/core@0.2.0
+npm unpublish @tanguito/freezeops@0.2.0
+npm unpublish @tanguito/freezeops-core@0.2.0
 ```

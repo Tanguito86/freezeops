@@ -21,12 +21,13 @@
 
 ### npm Packaging
 
-- Removed `"private": true` from `@freezeops/core` and `@freezeops/cli`
+- Removed `"private": true` from `@tanguito/freezeops-core` and `@tanguito/freezeops`
 - Added `repository`, `homepage`, `bugs`, `keywords`, `license` fields
 - Added `files` whitelist (dist/ only) and `publishConfig`
 - Fixed CLI `main` and `exports` to point to dist
 - Added `docs/npm-install.md` and `docs/npm-publish-checklist.md`
 - README: added Install from npm section
+- Published to npm as `@tanguito/freezeops-core` and `@tanguito/freezeops`
 
 ### Breaking changes
 
