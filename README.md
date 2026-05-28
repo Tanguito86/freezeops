@@ -139,6 +139,30 @@ node packages/cli/dist/index.js check --no-comment
 
 ---
 
+## Dogfooding
+
+FreezeOps audits itself. See [docs/dogfood.md](docs/dogfood.md) for details.
+
+Our own `freezeops.yml`:
+```yaml
+rules:
+  - type: max_changed_lines
+    value: 500
+  - type: forbidden_text
+    patterns:
+      - eval(
+      - console.log("debug")
+      - TODO_THROWAWAY
+  - type: protected_paths
+    paths:
+      - packages/core/src/engine.ts
+```
+
+The workflow runs on every PR and push to main — annotations, summary,
+and a PR comment with the full report.
+
+---
+
 ## License
 
 MIT
