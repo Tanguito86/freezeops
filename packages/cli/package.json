@@ -1,11 +1,11 @@
 {
   "name": "@tanguito/freezeops",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "FreezeOps CLI — run safety checks from the terminal",
   "repository": "github:Tanguito86/freezeops",
   "homepage": "https://github.com/Tanguito86/freezeops#readme",
   "bugs": "https://github.com/Tanguito86/freezeops/issues",
-  "keywords": ["freezeops", "guardrails", "ai-safety", "cli", "ci"],
+  "keywords": ["freezeops", "guardrails", "ai-safety", "cli", "ci", "sarif"],
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
@@ -34,7 +34,7 @@
   "dependencies": {
     "@actions/core": "^1.11.0",
     "@actions/github": "^6.0.0",
-    "@tanguito/freezeops-core": "^0.2.0"
+    "@tanguito/freezeops-core": "^0.3.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

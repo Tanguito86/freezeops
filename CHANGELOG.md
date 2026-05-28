@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.3.0] — 2026-05-28
+
+### Features
+
+- **SARIF output** — optional SARIF 2.1.0 report via `--sarif` flag
+- **`--sarif` / `-s` CLI flag** — writes violations as SARIF results (ruleId, level, message, locations, properties)
+- **GitHub Action `sarif` input** — same as CLI flag, compatible with `github/codeql-action/upload-sarif`
+- **Code Scanning compatible** — SARIF reports can be uploaded to GitHub Code Scanning
+
+### Docs
+
+- `docs/action.md`: SARIF section with `upload-sarif` workflow example
+- `docs/cli.md`: SARIF output usage and field reference
+- `README.md`: SARIF example in Install from npm section
+
+### Breaking changes
+
+None. SARIF output is optional and does not change existing behavior.
+
 ## [0.2.0] — 2026-05-28
 
 ### Features

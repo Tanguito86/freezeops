@@ -364,8 +364,7 @@ freezeops.yml          git diff
 
 ## Status
 
-**v0.2.0** — Global `ignore`, rule-level `exclude`, regex opt-in, and
-improved violations. See [CHANGELOG.md](CHANGELOG.md).
+**v0.3.0** — SARIF 2.1.0 output, `--sarif` flag, GitHub Code Scanning compatible.
 
 ---
 

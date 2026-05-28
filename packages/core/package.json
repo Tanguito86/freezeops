@@ -1,6 +1,6 @@
 {
   "name": "@tanguito/freezeops-core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "FreezeOps deterministic rules engine",
   "repository": "github:Tanguito86/freezeops",
   "homepage": "https://github.com/Tanguito86/freezeops#readme",
