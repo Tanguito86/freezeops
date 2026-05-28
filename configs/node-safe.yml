@@ -6,6 +6,11 @@
 # ───────────────────────────────────────────────────────────
 
 version: "1"
+
+ignore:
+  - node_modules/**
+  - dist/**
+  - coverage/**
 rules:
   # Backend PRs: keep them reviewable. 400 lines max.
   - type: max_changed_lines

@@ -6,6 +6,11 @@
 # ───────────────────────────────────────────────────────────
 
 version: "1"
+
+ignore:
+  - node_modules/**
+  - dist/**
+  - coverage/**
 rules:
   # Frontend PRs should be focused. 300 lines max.
   - type: max_changed_lines

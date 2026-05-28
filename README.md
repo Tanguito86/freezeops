@@ -53,9 +53,18 @@ Define safety rules in a YAML file. FreezeOps checks every PR against them
 ```yaml
 # freezeops.yml
 version: "1"
+
+# Global ignore — these files are excluded from ALL rules
+ignore:
+  - node_modules/**
+  - dist/**
+  - coverage/**
+
 rules:
   - type: max_changed_lines
     value: 500
+    exclude:
+      - docs/**           # don't count docs toward line limit
 
   - type: protected_paths
     paths:
@@ -67,6 +76,8 @@ rules:
       - eval(
       - setInterval
       - Math.random()
+    exclude:
+      - README.md         # README can mention banned patterns
 ```
 
 If a PR touches a protected path or adds a forbidden pattern → ❌ blocked.
@@ -359,7 +370,7 @@ Quick links:
 ## Known Limitations
 
 - **Diff parser**: unified diff only (add/modify/delete). No binary/rename support yet
-- **forbidden_text**: substring matching, not regex
+- **forbidden_text**: substring matching by default — use `regex: true` to opt in to regex
 - **PR comments**: require `pull-requests: write` permission
 - **Package**: not published to npm yet
 - **Marketplace**: not listed on GitHub Marketplace yet

@@ -7,6 +7,11 @@
 # ───────────────────────────────────────────────────────────
 
 version: "1"
+
+ignore:
+  - node_modules/**
+  - dist/**
+  - coverage/**
 rules:
   # Game changes should be surgical. 200 lines max.
   - type: max_changed_lines

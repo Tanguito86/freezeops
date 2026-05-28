@@ -73,7 +73,28 @@ function validateConfig(raw: unknown, filePath: string): FreezeOpsConfig {
     validateRule(rule, i, filePath),
   );
 
-  return { version: obj.version, rules };
+  // ignore (optional)
+  const ignore = validateIgnore(obj.ignore, filePath);
+
+  return { version: obj.version, rules, ignore };
+}
+
+function validateIgnore(
+  raw: unknown,
+  filePath: string,
+): string[] | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!Array.isArray(raw)) {
+    throw new Error("Config 'ignore' must be an array of glob strings");
+  }
+  for (const entry of raw) {
+    if (typeof entry !== "string" || entry.trim().length === 0) {
+      throw new Error(
+        `Config 'ignore': each entry must be a non-empty glob string`,
+      );
+    }
+  }
+  return raw as string[];
 }
 
 function validateRule(
@@ -117,7 +138,8 @@ function validateMaxChangedLines(
   if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
     throw new Error(`${prefix}: "value" must be a positive number`);
   }
-  return { type: "max_changed_lines", value };
+  const exclude = validateRuleExclude(obj.exclude, prefix);
+  return { type: "max_changed_lines", value, ...(exclude ? { exclude } : {}) };
 }
 
 function validateProtectedPaths(
@@ -136,7 +158,12 @@ function validateProtectedPaths(
       );
     }
   }
-  return { type: "protected_paths", paths: obj.paths as string[] };
+  const exclude = validateRuleExclude(obj.exclude, prefix);
+  return {
+    type: "protected_paths",
+    paths: obj.paths as string[],
+    ...(exclude ? { exclude } : {}),
+  };
 }
 
 function validateForbiddenText(
@@ -145,7 +172,7 @@ function validateForbiddenText(
 ): ForbiddenTextRule {
   if (!Array.isArray(obj.patterns) || obj.patterns.length === 0) {
     throw new Error(
-      `${prefix}: "patterns" must be a non-empty array of regex strings`,
+      `${prefix}: "patterns" must be a non-empty array`,
     );
   }
   for (const p of obj.patterns) {
@@ -155,5 +182,51 @@ function validateForbiddenText(
       );
     }
   }
-  return { type: "forbidden_text", patterns: obj.patterns as string[] };
+
+  // regex opt-in
+  const regex = obj.regex;
+  if (regex !== undefined && typeof regex !== "boolean") {
+    throw new Error(`${prefix}: "regex" must be a boolean`);
+  }
+
+  // Validate regex patterns if regex mode is enabled
+  if (regex === true) {
+    for (const pattern of obj.patterns as string[]) {
+      try {
+        new RegExp(pattern);
+      } catch (err) {
+        throw new Error(
+          `${prefix}: invalid regex pattern "${pattern}": ${String(err)}`,
+        );
+      }
+    }
+  }
+
+  const exclude = validateRuleExclude(obj.exclude, prefix);
+  return {
+    type: "forbidden_text",
+    patterns: obj.patterns as string[],
+    ...(regex ? { regex } : {}),
+    ...(exclude ? { exclude } : {}),
+  };
+}
+
+// ─── Shared helpers ──────────────────────────────────────────────────────
+
+function validateRuleExclude(
+  raw: unknown,
+  prefix: string,
+): string[] | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (!Array.isArray(raw)) {
+    throw new Error(`${prefix}: "exclude" must be an array of glob strings`);
+  }
+  for (const entry of raw) {
+    if (typeof entry !== "string" || entry.trim().length === 0) {
+      throw new Error(
+        `${prefix}: each entry in "exclude" must be a non-empty glob string`,
+      );
+    }
+  }
+  return raw as string[];
 }

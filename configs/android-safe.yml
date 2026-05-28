@@ -6,6 +6,11 @@
 # ───────────────────────────────────────────────────────────
 
 version: "1"
+
+ignore:
+  - node_modules/**
+  - dist/**
+  - coverage/**
 rules:
   # Mobile PRs: keep diffs tight. 300 lines max.
   - type: max_changed_lines

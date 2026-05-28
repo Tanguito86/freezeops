@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+- **Global `ignore`** — files matching these glob patterns are excluded from ALL rules
+- **Rule-level `exclude`** — all three rule types support per-rule glob exclusions
+- **Regex opt-in** — `forbidden_text` supports `regex: true` for full regex matching
+- **Better violations** — `matchedPattern` and `matchedGlob` fields for precise diagnostics
+
+### Rule packs
+
+- All packs now include `ignore` for `node_modules/**`, `dist/**`, `coverage/**`
+
+### Docs
+
+- Updated `docs/rules.md` with `ignore`, `exclude`, and `regex` documentation
+- Updated `docs/rule-packs.md` with global ignore section
+- Updated `README.md` config example with new features
+
 ## v0.1.0 — 2026-05-28
 
 Initial public release.

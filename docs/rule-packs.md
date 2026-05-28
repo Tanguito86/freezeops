@@ -86,6 +86,18 @@ Packs are starting points, not prisons. Open the config and edit:
 
 Every pack includes comments explaining what each rule protects and why.
 
+All packs now include a global `ignore` section that excludes common
+build output and dependency directories:
+
+```yaml
+ignore:
+  - node_modules/**
+  - dist/**
+  - coverage/**
+```
+
+You can add your own — `docs/**`, `*.md`, generated files, etc.
+
 ## Limitations
 
 - Packs use **substring matching** for `forbidden_text` (not regex).

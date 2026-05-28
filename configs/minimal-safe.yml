@@ -5,6 +5,11 @@
 # ───────────────────────────────────────────────────────────
 
 version: "1"
+
+ignore:
+  - node_modules/**
+  - dist/**
+  - coverage/**
 rules:
   # Block PRs that change more than 500 lines.
   # Large diffs are hard to review — AI or human.
