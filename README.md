@@ -28,6 +28,23 @@ someone notices, the regression is already deployed.
 
 ---
 
+## Why FreezeOps
+
+Existing tools don't solve this problem:
+
+| Tool | What it does | Why it's not enough |
+|---|---|---|
+| Linters | Style rules | Don't understand which code is sensitive |
+| Tests | Verify behavior | Can't block changes to untested code |
+| Code review | Human judgment | AI generates faster than humans can review |
+| Git hooks | Block on pattern | Same file, different rules — no context |
+
+FreezeOps fills the gap: **policy enforcement between CI and code review.**
+It's the layer that says "this path is off-limits, this pattern is banned"
+— and enforces it deterministically, before the PR reaches a human.
+
+---
+
 ## What FreezeOps Does
 
 Define safety rules in a YAML file. FreezeOps checks every PR against them
@@ -110,6 +127,54 @@ a PR, you know exactly why.
 
 ---
 
+## Design Principles
+
+1. **Deterministic.** Every rule is a pure function. Same diff →
+   same result. Every time.
+
+2. **Offline.** No API calls, no cloud services, no telemetry.
+   Runs entirely in your CI runner.
+
+3. **Transparent.** Violations show exactly what triggered them:
+   which file, which rule, which pattern.
+
+4. **Minimal.** The engine is ~120 lines. Rules are ~40 lines each.
+   Small enough to audit in 10 minutes.
+
+5. **Config-driven.** All behavior comes from `freezeops.yml`.
+   No hidden settings, no magic defaults.
+
+---
+
+## Deterministic vs AI Magic
+
+FreezeOps is intentionally non-AI. Here's why:
+
+| | AI-based tools | FreezeOps |
+|---|---|---|
+| **Same input → same output?** | Sometimes | Always |
+| **False positives?** | Common | Near-zero |
+| **Explains decisions?** | "Probably unsafe" | Exact file, rule, pattern |
+| **Needs network?** | Usually | Never |
+| **Auditable?** | Black box | 120 lines of TypeScript |
+
+AI is great at generating code. It's terrible at enforcing boundaries.
+FreezeOps does the enforcing — deterministically.
+
+---
+
+## When NOT to Use FreezeOps
+
+| Situation | Why | Alternative |
+|---|---|---|
+| You need code quality review | FreezeOps checks boundaries, not logic | SonarQube, CodeClimate |
+| You want AI-powered suggestions | FreezeOps is deterministic on purpose | CodeRabbit, Copilot |
+| Your team has no sensitive code | No paths to protect | Standard CI only |
+| You need regex patterns | Substring only (regex planned) | ESLint, grep hooks |
+| You want a cloud service | FreezeOps runs in your CI | Wait for SaaS tier |
+
+---
+
 ## Starter Rule Packs
 
 Pre-built configs for common project types. Copy, paste, protected.
@@ -151,11 +216,45 @@ See [docs/dogfood.md](docs/dogfood.md)
 
 ---
 
+## How It Works
+
+```
+freezeops.yml          git diff
+     │                     │
+     ▼                     ▼
+┌──────────┐       ┌──────────────┐
+│  config  │       │   git diff   │
+│  loader  │       │   reader     │
+└──────────┘       └──────────────┘
+     │                     │
+     └──────┬──────────────┘
+            ▼
+     ┌────────────┐      ┌──────────────┐
+     │   rule     │ ───▶ │  violations  │
+     │   engine   │      │  (if any)    │
+     └────────────┘      └──────────────┘
+                                │
+                                ▼
+                         ┌──────────────┐
+                         │  annotations │
+                         │  + PR comment│
+                         └──────────────┘
+```
+
+[Full architecture →](docs/architecture.md) · [How it works →](docs/how-freezeops-works.md)
+
+---
+
 ## Documentation
 
 - [Rules](docs/rules.md) — rule types and configuration
 - [GitHub Action](docs/action.md) — inputs, permissions, examples
 - [CLI](docs/cli.md) — terminal usage and flags
+- [Architecture](docs/architecture.md) — engine internals, data flow
+- [How it works](docs/how-freezeops-works.md) — plain-English walkthrough
+- [Quickstart](docs/quickstart.md) — 2-minute setup with troubleshooting
+- [Rule packs](docs/rule-packs.md) — available packs, customization
+- [First rule pack](docs/first-rule-pack.md) — create your own in 15 min
 - [Dogfooding](docs/dogfood.md) — how we use FreezeOps on itself
 
 ---
@@ -169,8 +268,19 @@ dogfooding are live. See [CHANGELOG.md](CHANGELOG.md).
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). TL;DR: deterministic first,
-no AI dependency, small changes.
+FreezeOps is open source and deterministic-first. We welcome:
+
+- **Rule packs** — new configs for ecosystems we haven't covered
+- **Bug fixes** — if something breaks, tell us
+- **Docs** — examples, guides, translations
+- **Ideas** — open a [Rule Request](https://github.com/Tanguito86/freezeops/issues/new?template=rule-request.yml)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide.
+Quick links:
+
+- [Create your first rule pack →](docs/first-rule-pack.md)
+- [Architecture overview →](docs/architecture.md)
+- [Bad vs good examples →](examples/bad-vs-good)
 
 ---
 

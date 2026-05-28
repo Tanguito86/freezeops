@@ -1,0 +1,87 @@
+name: Bug Report
+description: FreezeOps isn't working as expected — found a bug
+title: "[BUG] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. The more detail you
+        provide, the faster we can fix it.
+
+  - type: input
+    id: version
+    attributes:
+      label: FreezeOps version
+      description: Which version are you using? (commit hash or tag)
+      placeholder: v0.1.0 or commit abc1234
+    validations:
+      required: true
+
+  - type: dropdown
+    id: where
+    attributes:
+      label: Where does it happen?
+      options:
+        - GitHub Actions (CI)
+        - Local CLI
+        - Both
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened?
+      description: What did you expect to happen? What actually happened?
+      placeholder: |
+        Expected: PR with only menu.js changes passes.
+        Actual: protected_paths violation fired on menu.js even though it's not in a protected path.
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Your freezeops.yml
+      description: Paste your config (remove sensitive paths if needed)
+      render: yaml
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Exact commands or GitHub Actions workflow that triggers it
+      placeholder: |
+        1. Create freezeops.yml with protected_paths: src/gameplay/**
+        2. Edit src/ui/menu.js
+        3. Run `node packages/cli/dist/index.js check --config freezeops.yml`
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: FreezeOps output
+      description: Paste the full CLI output or GitHub Actions log
+      render: shell
+    validations:
+      required: true
+
+  - type: input
+    id: node_version
+    attributes:
+      label: Node.js version
+      placeholder: node --version
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: Ubuntu 24.04, macOS 14, Windows 11
+    validations:
+      required: true

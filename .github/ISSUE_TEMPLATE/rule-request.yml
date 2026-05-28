@@ -1,0 +1,77 @@
+name: Rule Request
+description: Suggest a new rule type for FreezeOps
+title: "[RULE] "
+labels: ["enhancement", "rule-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        FreezeOps is deterministic — new rules must be checkable without
+        AI, without network access, and without false positives.
+
+  - type: input
+    id: rule_name
+    attributes:
+      label: Rule name
+      description: What would you call this rule type?
+      placeholder: max_file_count, required_reviewers, banned_imports
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_it_does
+    attributes:
+      label: What should it check?
+      description: Describe the check — be specific about inputs and outputs
+      placeholder: |
+        Checks that no PR adds more than N new files. If a PR adds
+        files beyond the limit, it fails with a clear message listing
+        the files.
+    validations:
+      required: true
+
+  - type: textarea
+    id: config_syntax
+    attributes:
+      label: Config syntax
+      description: Show how you'd configure this rule in freezeops.yml
+      render: yaml
+      placeholder: |
+        rules:
+          - type: max_file_count
+            value: 10
+    validations:
+      required: true
+
+  - type: textarea
+    id: real_world
+    attributes:
+      label: Real-world use case
+      description: Tell us about a situation where this rule would have saved you
+      placeholder: |
+        Claude Code generated 47 new files in a single PR. Reviewing
+        them all at once was impossible. A max_file_count rule would
+        have caught this.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: determinism
+    attributes:
+      label: Is this check deterministic?
+      description: Same input → same output, every time, no AI needed?
+      options:
+        - "Yes — purely mechanical"
+        - "Mostly — edge cases might need heuristics"
+        - "No — needs AI or external service"
+    validations:
+      required: true
+
+  - type: textarea
+    id: false_positives
+    attributes:
+      label: False positive risk
+      description: When might this rule block a legitimate change?
+      placeholder: |
+        Splitting a large module into smaller files could trigger
+        max_file_count. A `--skip` flag or config exclusion might help.

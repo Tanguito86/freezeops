@@ -1,0 +1,65 @@
+name: Config Help
+description: Need help writing or debugging your freezeops.yml
+title: "[CONFIG] "
+labels: ["help", "config"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Stuck on a config? Paste your freezeops.yml and what you're
+        trying to achieve. We'll help you tune it.
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: What are you trying to protect?
+      description: Describe the sensitive code and what kind of changes worry you
+      placeholder: |
+        Our payment processing code in src/billing/ should never be
+        touched by AI tools. We also want to block eval() everywhere.
+    validations:
+      required: true
+
+  - type: textarea
+    id: config
+    attributes:
+      label: Your current freezeops.yml
+      description: Paste what you have so far (or what you tried)
+      render: yaml
+      placeholder: |
+        version: "1"
+        rules:
+          - type: protected_paths
+            paths:
+              - src/billing/**
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happens
+    attributes:
+      label: What happens when you run it?
+      description: Paste the CLI output
+      render: shell
+      placeholder: |
+        FreezeOps check FAIL
+        - [protected_paths] Modified protected path
+          file: src/billing/invoice.ts
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: What outcome do you want instead?
+      placeholder: |
+        I want src/billing/ to be protected, but I also want to allow
+        changes to src/billing/tests/ — test files should be safe.
+    validations:
+      required: true
+
+  - type: input
+    id: project_type
+    attributes:
+      label: Project type
+      description: Web app, Node backend, game, Android, other?
+      placeholder: Node backend (Express)
