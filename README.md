@@ -364,7 +364,7 @@ freezeops.yml          git diff
 
 ## Status
 
-**v0.3.0** — SARIF 2.1.0 output, `--sarif` flag, GitHub Code Scanning compatible.
+**v0.4.0** — Scoped `max_changed_lines` with per-zone thresholds. Validated in production WMS.
 
 ---
 

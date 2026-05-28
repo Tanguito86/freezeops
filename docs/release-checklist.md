@@ -4,6 +4,30 @@ Checklist for preparing and publishing a FreezeOps release.
 
 ---
 
+## v0.4.0 Checklist
+
+- [ ] `npm install` — dependencies correct
+- [ ] `npm run validate` — build + typecheck PASS
+- [ ] `node packages/cli/dist/index.js check --config freezeops.yml` — dogfood root PASS
+- [ ] Smoke: SARIF clean PASS — `--sarif /tmp/test.json` writes valid JSON
+- [ ] Smoke: SARIF violation PASS — exit 1, `results.length > 0`
+- [ ] Smoke: scoped max_changed_lines PASS
+- [ ] Smoke: `npm pack` core — dist/ only, no extra files
+- [ ] Smoke: `npm pack` CLI — dist/ only, no extra files
+- [ ] `CHANGELOG.md` updated with `[0.4.0]` section
+- [ ] `RELEASE_NOTES_v0.4.0.md` created
+- [ ] `README.md` version updated to v0.4.0
+- [ ] All `package.json` versions bumped to `0.4.0`
+- [ ] Working tree clean
+- [ ] `npm publish` core: `cd packages/core && npm publish --access public`
+- [ ] `npm publish` CLI: `cd packages/cli && npm publish --access public`
+- [ ] Tag `v0.4.0` on `main`
+- [ ] Push tag: `git push origin v0.4.0`
+- [ ] Create GitHub release from tag
+- [ ] Attach `RELEASE_NOTES_v0.4.0.md` as release body
+
+---
+
 ## v0.3.0 Checklist
 
 - [ ] `npm install` — dependencies correct

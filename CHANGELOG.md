@@ -1,10 +1,25 @@
 # Changelog
 
-## [Unreleased]
+## [0.4.0] — 2026-05-28
 
 ### Features
 
-- **`max_changed_lines` path scoping** — `paths` field limits line counting to specific globs, enabling per-zone thresholds (e.g., 40 lines for `src/auth/**`, 500 globally)
+- **Scoped `max_changed_lines`** — `paths` field limits line counting to specific globs, enabling per-zone thresholds (e.g., 40 lines for `src/auth/**`, 300 globally)
+- **Scoped `exclude`** — rule-level `exclude` globs filter files from scoped max_changed_lines counting
+
+### Validated
+
+- Galaxy Raiders (HTML5 shmup, 70+ files)
+- SoundBend (Android/Kotlin DSP, private)
+- RecepciónApp/WMS (React/Firebase, private)
+
+### Compatibility
+
+Existing configs unchanged. Scoped rules are additive — if `paths` is not specified, behavior is identical to v0.3.0.
+
+### Breaking changes
+
+None.
 
 ## [0.3.0] — 2026-05-28
 

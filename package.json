@@ -1,6 +1,6 @@
 {
   "name": "freezeops",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Guardrails for AI-assisted development — deterministic safety rules for sensitive codebases",
   "repository": "github:Tanguito86/freezeops",
