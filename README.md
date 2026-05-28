@@ -207,12 +207,72 @@ Full walkthrough: [docs/demo.md](docs/demo.md)
 
 ---
 
+## Case Studies
+
+Real projects protected by FreezeOps.
+
+### Galaxy Raiders
+
+HTML5 shmup with 70+ JS files, 5 bosses, and frozen gameplay zones.
+16 protected files across 5 categories: gameplay core, balance,
+bosses, scoring, and audio DSP.
+
+```yaml
+# Real config (subset):
+protected_paths:
+  - www/game-loop.js       # Frame timing
+  - www/collisions.js      # Hitboxes
+  - www/boss-patterns.js   # Boss AI
+  - www/audio-engine.js    # DSP runtime
+
+forbidden_text:
+  - setInterval            # Breaks frame timing
+  - Math.random(           # Non-deterministic
+  - TODO_THROWAWAY         # Debug leftovers
+```
+
+**Results:** 4 pre-existing violations caught on first run.
+Smoke: menus ✅ (safe), collisions ❌ (protected). 21K-line
+dirty working tree blocked by `max_changed_lines`.
+
+[Full case study →](docs/case-studies/galaxy-raiders.md) · [Config →](https://github.com/Tanguito86/galaxy-raiders/blob/master/freezeops.yml)
+
+---
+
 ## Dogfooding
 
 FreezeOps audits itself. Our own `freezeops.yml` protects the rule
 engine from accidental changes and blocks debugging leftovers.
 
 See [docs/dogfood.md](docs/dogfood.md)
+
+---
+
+## What We Learned
+
+After integrating FreezeOps into Galaxy Raiders and dogfooding it on
+itself, a few patterns emerged:
+
+1. **`protected_paths` is the killer feature.** Blocking changes to
+   specific files catches the most dangerous AI behavior: touching
+   code it doesn't understand.
+
+2. **`forbidden_text` finds pre-existing debt.** `setInterval` and
+   `Math.random(` were already in the working tree before FreezeOps
+   was installed — the tool surfaced them on its first run, not just
+   future changes.
+
+3. **`max_changed_lines` catches reality.** A 21K-line dirty working
+   tree triggers the limit immediately. Useful signal: if you have
+   that much uncommitted work, your PRs aren't small.
+
+4. **Configs can self-trigger.** Listing patterns in `freezeops.yml`
+   that also appear in your docs or comments will trigger violations
+   on your own config file. Future versions will add exclusions.
+
+5. **Packs accelerate, but don't replace customization.** Every repo
+   has its own structure. Galaxy Raiders needed exact file paths, not
+   glob patterns — all 70 JS files live flat in `www/`.
 
 ---
 
