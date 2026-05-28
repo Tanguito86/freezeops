@@ -1,0 +1,27 @@
+# ── node-safe ──────────────────────────────────────────────
+# For Express, Fastify, NestJS, and other Node.js backends.
+#
+# Protects auth, billing, and database migrations.
+# Copy to your repo root as freezeops.yml
+# ───────────────────────────────────────────────────────────
+
+version: "1"
+rules:
+  # Backend PRs: keep them reviewable. 400 lines max.
+  - type: max_changed_lines
+    value: 400
+
+  # Protect business-critical paths.
+  - type: protected_paths
+    paths:
+      - src/auth/**
+      - src/billing/**
+      - src/payments/**
+      - prisma/migrations/**
+
+  # Dangerous patterns in backend code.
+  - type: forbidden_text
+    patterns:
+      - eval(
+      - child_process.exec(
+      - execSync(

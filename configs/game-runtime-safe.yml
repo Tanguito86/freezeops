@@ -1,0 +1,27 @@
+# ── game-runtime-safe ──────────────────────────────────────
+# For HTML5 games, game engines, DSP, and real-time runtimes.
+#
+# Gameplay code breaks subtly when AI "optimizes" it.
+# This pack freezes critical paths.
+# Copy to your repo root as freezeops.yml
+# ───────────────────────────────────────────────────────────
+
+version: "1"
+rules:
+  # Game changes should be surgical. 200 lines max.
+  - type: max_changed_lines
+    value: 200
+
+  # Protect paths where AI changes cause invisible regressions.
+  - type: protected_paths
+    paths:
+      - gameplay/**
+      - engine/**
+      - collision/**
+      - dsp/**
+
+  # Runtime poisons. AI tools love these "shortcuts."
+  - type: forbidden_text
+    patterns:
+      - setInterval
+      - Math.random(

@@ -147,6 +147,20 @@ a PR, you know exactly why.
 
 ---
 
+## Starter Rule Packs
+
+Pre-built configs for common project types. Copy, paste, protected.
+
+```bash
+cp configs/web-safe.yml ./freezeops.yml   # React, Vue, Next.js
+cp configs/node-safe.yml ./freezeops.yml  # Express, Fastify
+cp configs/game-runtime-safe.yml ./freezeops.yml  # Games, DSP
+```
+
+[Browse all packs](configs/) · [Usage guide](docs/rule-packs.md)
+
+---
+
 ## Demo
 
 A 60-second example: [examples/shmup-demo](examples/shmup-demo)

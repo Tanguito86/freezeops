@@ -1,0 +1,27 @@
+# ── web-safe ───────────────────────────────────────────────
+# For React, Vue, Svelte, Next.js, and other frontend apps.
+#
+# Protects auth + security code from accidental AI changes.
+# Copy to your repo root as freezeops.yml
+# ───────────────────────────────────────────────────────────
+
+version: "1"
+rules:
+  # Frontend PRs should be focused. 300 lines max.
+  - type: max_changed_lines
+    value: 300
+
+  # Protect auth and security-critical paths.
+  # AI tools love to "refactor" these — FreezeOps blocks that.
+  - type: protected_paths
+    paths:
+      - src/auth/**
+      - src/middleware/**
+      - src/security/**
+
+  # Dangerous patterns that AI coding tools frequently inject.
+  - type: forbidden_text
+    patterns:
+      - eval(
+      - dangerouslySetInnerHTML
+      - document.write(

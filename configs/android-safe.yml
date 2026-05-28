@@ -1,0 +1,26 @@
+# ── android-safe ───────────────────────────────────────────
+# For Android apps (Kotlin, Java, Compose).
+#
+# Protects audio, billing, and auth code from AI changes.
+# Copy to your repo root as freezeops.yml
+# ───────────────────────────────────────────────────────────
+
+version: "1"
+rules:
+  # Mobile PRs: keep diffs tight. 300 lines max.
+  - type: max_changed_lines
+    value: 300
+
+  # Protect sensitive subsystems.
+  # ** matches any package depth (com.example.app.audio, etc.)
+  - type: protected_paths
+    paths:
+      - app/src/main/java/**/audio/**
+      - app/src/main/java/**/billing/**
+      - app/src/main/java/**/auth/**
+
+  # Debug-only imports that shouldn't reach production.
+  - type: forbidden_text
+    patterns:
+      - Log.d(
+      - TODO_THROWAWAY

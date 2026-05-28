@@ -1,0 +1,18 @@
+# ── minimal-safe ───────────────────────────────────────────
+# Universal starter config. Safe default for any project.
+#
+# Copy to your repo root as freezeops.yml
+# ───────────────────────────────────────────────────────────
+
+version: "1"
+rules:
+  # Block PRs that change more than 500 lines.
+  # Large diffs are hard to review — AI or human.
+  - type: max_changed_lines
+    value: 500
+
+  # Catch debugging leftovers that AI tools love to leave behind.
+  - type: forbidden_text
+    patterns:
+      - eval(
+      - TODO_THROWAWAY
