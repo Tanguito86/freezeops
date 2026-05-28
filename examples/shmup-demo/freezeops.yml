@@ -1,0 +1,9 @@
+version: "1"
+rules:
+  - type: max_changed_lines
+    value: 50
+
+  - type: protected_paths
+    paths:
+      - examples/shmup-demo/src/gameplay/**
+      - examples/shmup-demo/src/engine/**

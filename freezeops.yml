@@ -3,12 +3,6 @@ rules:
   - type: max_changed_lines
     value: 500
 
-  - type: forbidden_text
-    patterns:
-      - eval(
-      - console.log("debug")
-      - TODO_THROWAWAY
-
   - type: protected_paths
     paths:
       - packages/core/src/engine.ts

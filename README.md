@@ -147,6 +147,16 @@ a PR, you know exactly why.
 
 ---
 
+## Demo
+
+A 60-second example: [examples/shmup-demo](examples/shmup-demo)
+
+Shows a tiny HTML5 shoot-em-up with protected gameplay code. Edit the
+menu → FreezeOps passes. Touch the game loop → FreezeOps blocks it.
+Full walkthrough: [docs/demo.md](docs/demo.md)
+
+---
+
 ## Dogfooding
 
 FreezeOps audits itself. Our own `freezeops.yml` protects the rule
