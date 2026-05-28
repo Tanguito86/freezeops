@@ -4,19 +4,34 @@
  * FreezeOps CLI — deterministic safety rules runner.
  */
 
-import { loadConfig, runFreezeOpsCheck } from "@freezeops/core";
+import { loadConfig, runRuleEngine } from "@freezeops/core";
+import type { RuleEngineInput } from "@freezeops/core";
 
 async function main(): Promise<void> {
   try {
     const config = await loadConfig();
 
-    console.log("FreezeOps config loaded OK");
-    console.log(`Rules: ${config.rules.length}`);
+    // Mock input — real diff reader ships in 01D
+    const input: RuleEngineInput = {
+      config,
+      changedFiles: [],
+    };
 
-    // Placeholder — real audit ships in 01C
-    const result = runFreezeOpsCheck();
-    if (!result.passed) {
-      console.error("FreezeOps check failed");
+    const result = runRuleEngine(input);
+
+    if (result.passed) {
+      console.log("FreezeOps check passed");
+      console.log(`Rules checked: ${result.checkedRules}`);
+      console.log(`Violations: ${result.violations.length}`);
+    } else {
+      console.log("FreezeOps check failed");
+      console.log(`Rules checked: ${result.checkedRules}`);
+      console.log(`Violations: ${result.violations.length}`);
+      for (const v of result.violations) {
+        const file = v.file ? ` [${v.file}]` : "";
+        const detail = v.detail ? ` (${v.detail})` : "";
+        console.log(`  - ${v.message}${file}${detail}`);
+      }
       process.exit(1);
     }
   } catch (err) {

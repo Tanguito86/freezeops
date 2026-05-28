@@ -7,9 +7,9 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "validate": "npm run typecheck && npm run build"
+    "build": "npm run build -w @freezeops/core && npm run build -w @freezeops/cli",
+    "typecheck": "npm run typecheck -w @freezeops/core && npm run typecheck -w @freezeops/cli",
+    "validate": "npm run build -w @freezeops/core && npm run typecheck && npm run build -w @freezeops/cli"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -5,24 +5,34 @@
 export { loadConfig } from "./config.js";
 export type { LoadConfigOptions } from "./config.js";
 
+export { runRuleEngine } from "./engine.js";
+
 import type {
   FreezeOpsConfig,
   FreezeOpsRule,
-  FreezeOpsResult,
   MaxChangedLinesRule,
   ProtectedPathsRule,
   ForbiddenTextRule,
+  ChangedFile,
+  RuleViolation,
+  RuleEngineResult,
+  RuleEngineInput,
 } from "./types.js";
 
 export type {
   FreezeOpsConfig,
   FreezeOpsRule,
-  FreezeOpsResult,
   MaxChangedLinesRule,
   ProtectedPathsRule,
   ForbiddenTextRule,
+  ChangedFile,
+  RuleViolation,
+  RuleEngineResult,
+  RuleEngineInput,
 };
 
-export function runFreezeOpsCheck(): FreezeOpsResult {
+// ── Legacy (01A bootstrap) ──────────────────────────────────────────────
+
+export function runFreezeOpsCheck(): { passed: boolean } {
   return { passed: true };
 }

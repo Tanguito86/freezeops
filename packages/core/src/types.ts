@@ -36,8 +36,28 @@ export interface FreezeOpsConfig {
   rules: FreezeOpsRule[];
 }
 
-// ─── Audit result (placeholder — engine ships in 01C) ───────────────────
+// ─── Engine input / output ───────────────────────────────────────────────
 
-export interface FreezeOpsResult {
+export interface ChangedFile {
+  path: string;
+  addedLines: string[];
+  removedLines?: string[];
+}
+
+export interface RuleViolation {
+  ruleType: string;
+  message: string;
+  file?: string;
+  detail?: string;
+}
+
+export interface RuleEngineResult {
   passed: boolean;
+  violations: RuleViolation[];
+  checkedRules: number;
+}
+
+export interface RuleEngineInput {
+  config: FreezeOpsConfig;
+  changedFiles: ChangedFile[];
 }
