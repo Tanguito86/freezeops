@@ -6,9 +6,9 @@ Stop AI coding tools from silently damaging your codebase. FreezeOps lets you de
 
 ---
 
-## Status: v0.4 — Git Diff Reader
+## Status: v0.5 — GitHub Action
 
-Config loading, rule engine, and git diff reader are live. GitHub Action ships in v0.5.
+Runs as a GitHub Action on pull requests and pushes. PR comments ship in v0.6.
 
 ---
 
@@ -17,8 +17,48 @@ Config loading, rule engine, and git diff reader are live. GitHub Action ships i
 ```bash
 npm install
 npm run validate                           # typecheck + build
-node packages/cli/dist/index.js            # run against local changes
+
+# Run locally
+node packages/cli/dist/index.js
+node packages/cli/dist/index.js check --config freezeops.yml
+node packages/cli/dist/index.js check --base-ref origin/main
 ```
+
+---
+
+## GitHub Action
+
+```yaml
+name: FreezeOps
+on:
+  pull_request:
+  push:
+
+jobs:
+  freezeops:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0              # needed for base-ref comparison
+
+      - name: Install dependencies
+        run: npm install
+
+      - uses: ./
+        with:
+          config: freezeops.yml
+          base-ref: origin/main
+```
+
+The action reads `freezeops.yml` from your repo root by default and compares the PR against `origin/main`.
+
+### Inputs
+
+| Input | Default | Description |
+|---|---|---|
+| `config` | `freezeops.yml` | Path to config file |
+| `base-ref` | _(none)_ | Base ref for diff (e.g. `origin/main`) |
 
 ---
 
@@ -52,54 +92,41 @@ rules:
 ## CLI
 
 ```bash
+# Check working tree changes
 node packages/cli/dist/index.js
+
+# Check staged changes  
+node packages/cli/dist/index.js check
+
+# Custom config
+node packages/cli/dist/index.js check --config path/to/freezeops.yml
+
+# Compare against a base ref (for PR simulation)
+node packages/cli/dist/index.js check --base-ref origin/main
 ```
 
-The CLI reads local git changes (staged first, then working tree) and runs all configured rules.
+### Output format
 
-Clean pass:
 ```
-FreezeOps check passed
+FreezeOps check PASS
 Files checked: 3
 Rules checked: 2
 Violations: 0
 ```
 
-With violations:
+On failure:
 ```
-FreezeOps check failed
+FreezeOps check FAIL
 Files checked: 3
 Rules checked: 2
-Violations: 1
-  - Modified protected path [gameplay/player.js] (matched glob: gameplay/**)
-```
+Violations: 2
 
-### Local testing workflow
-
-```bash
-# 1. Make changes to a file
-echo "setInterval(() => {}, 1000)" >> utils.js
-
-# 2. Run FreezeOps (checks working tree)
-node packages/cli/dist/index.js
-
-# 3. Stage the changes
-git add utils.js
-
-# 4. Run again (checks staged)
-node packages/cli/dist/index.js
-```
-
----
-
-## Engine Input Model
-
-```typescript
-interface ChangedFile {
-  path: string;
-  addedLines: string[];
-  removedLines?: string[];
-}
+- [protected_paths] Modified protected path
+  file: gameplay/player.js
+  detail: gameplay/**
+- [forbidden_text] Forbidden pattern detected
+  file: utils.js
+  detail: "eval("
 ```
 
 ---
@@ -107,7 +134,7 @@ interface ChangedFile {
 ## Packages
 
 - `@freezeops/core` — config loader + rules engine + git diff reader
-- `@freezeops/cli` — terminal runner
+- `@freezeops/cli` — terminal runner + GitHub Action entrypoint
 
 ---
 

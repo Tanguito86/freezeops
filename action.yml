@@ -1,0 +1,16 @@
+name: FreezeOps
+description: Guardrails for AI-assisted development — deterministic safety rules for sensitive codebases
+author: FreezeOps
+
+inputs:
+  config:
+    description: Path to freezeops config file
+    required: false
+    default: freezeops.yml
+  base-ref:
+    description: Base ref for diff comparison (e.g. origin/main)
+    required: false
+
+runs:
+  using: node20
+  main: packages/cli/dist/index.js
