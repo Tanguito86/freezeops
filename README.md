@@ -189,6 +189,16 @@ no AI dependency, small changes.
 
 ---
 
+## Known Limitations
+
+- **Diff parser**: unified diff only (add/modify/delete). No binary/rename support yet
+- **forbidden_text**: substring matching, not regex
+- **PR comments**: require `pull-requests: write` permission
+- **Package**: not published to npm yet
+- **Marketplace**: not listed on GitHub Marketplace yet
+
+---
+
 ## License
 
 MIT — see [LICENSE](LICENSE)
