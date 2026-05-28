@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@actions/core": "^1.11.0",
     "@freezeops/core": "*"
   },
   "devDependencies": {
