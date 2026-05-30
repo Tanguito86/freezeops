@@ -12,10 +12,14 @@
   ],
   "scripts": {
     "build": "npm run build -w @tanguito/freezeops-core && npm run build -w @tanguito/freezeops",
+    "build:action": "npm run build && ncc build packages/cli/dist/index.js -o action-dist --minify",
     "typecheck": "npm run typecheck -w @tanguito/freezeops-core && npm run typecheck -w @tanguito/freezeops",
     "validate": "npm run build -w @tanguito/freezeops-core && npm run typecheck && npm run build -w @tanguito/freezeops"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.38.4"
   }
 }
